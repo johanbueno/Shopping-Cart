@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { IProduct } from './product';
+import { ProductService } from './product.service';
+
+
 
 @Component({
   selector: 'app-product-list',
@@ -6,69 +10,77 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
-  pageTitle: string = 'Product List';
-  imageWidth: number =50;
-  imageMargin: number = 2;
-  showImage: boolean =false;
-  listFilter:string ='coconut';
-  products: any[]=
-  [
-    {
-      "productId": 1,
-      "productName": "Banana",
-      "productCode": "0011",
-      "description": "Organic Banana from Colombia",
-      "price": 1,
-      "starRating": 3.2,
-      "imageUrl":'./assets/images/banana.jpg'
+  
+  pageTitle: string = 'SHOPPING CART';
+  showImage: boolean = true;
+  total: number;
+  runningValue: any;
+  Quantity:any;
 
-    },
-    {
-      "productId": 2,
-      "productName": "Apple",
-      "productCode": "0023",
-      "description": "Organic Apples from Costa Rica",
-      "price": 2,
-      "starRating": 4.2,
-      "imageUrl": './assets/images/Apple.jpeg'
-    },
-    {
-      "productId": 5,
-      "productName": "Coconut",
-      "productCode": "0048",
-      "description": "Organic Coconut from Brazil",
-      "price": 3.5,
-      "starRating": 4.8,
-      "imageUrl": './assets/images/coconut.jpeg'
-    },
-    {
-      "productId": 8,
-      "productName": "Kiwi",
-      "productCode": "0022",
-      "description": "Organic Kiwi from USA",
-      "price": 2.50,
-      "starRating": 3.7,
-      "imageUrl": './assets/images/kiwi.jpeg'
-    },
-    {
-      "productId": 10,
-      "productName": "Grape",
-      "productCode": "0042",
-      "description": "Organic Grapes from California / USA",
-      "price": 5.95,
-      "starRating": 4.6,
-      "imageUrl": './assets/images/grapes.jpeg'
-    },
-    
-  ]
-  toggleImage(): void{
-    this.showImage =!this.showImage;
+
+  public addProductToCart (product:IProduct):void {
+    this.productService.addItem
+  }
+  onRatingClicked(message: string): void {
+    this.pageTitle = 'Product '  + message;
   }
   
-  constructor() { }
+  _listFilter: string;
+  get listFilter(): string {
+    return this._listFilter;
+  }
+  set listFilter(value: string) {
+    this._listFilter = value;
+    this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.productService.productList;
+  }
+  filteredProducts: IProduct[];
+  
 
-  ngOnInit() {
+  constructor(public productService: ProductService,
+  ) {
+
+  }
+
+  protect(event) {
+    const charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
+  }
+
+  calculateTotal() {
+    this.total = this.productService.productList.reduce(function (runningValue: any, p: IProduct) {
+     return runningValue + (p.price * p.Quantity);
+    }, 0);
+    // let total = 0;
+    // this.products.forEach(product => {
+    //   total = total + (product.Quantity * product.price);
+    // });
+    // this.total = total;
+  }
+
+  performFilter(filterBy: string): IProduct[] {
+    filterBy = filterBy.toLocaleLowerCase();
+    return this.productService.productList.filter((product: IProduct) =>
+      product.Name.toLocaleLowerCase().indexOf(filterBy) !== -1);
+  }
+  toggleImage(): void {
+    this.showImage = !this.showImage;
+  }
+
+  public ngOnInit() {
+    this.productService.myHttpCall.subscribe(resp => {
+      this.filteredProducts = resp['groceries'];
+    });
     
+    // setInterval(() => {
+    //   console.log('a', this.productService.productList);
+    // }, 2000);
+    //this.total = this.products.reduce(function (runningValue: any, products: IProduct) {
+     // runningValue = runningValue + (products.price * uantity.value);
+    //}, 0);
+    this.calculateTotal();
   }
 
 }

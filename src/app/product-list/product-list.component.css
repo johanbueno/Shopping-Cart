@@ -1,0 +1,49 @@
+thead {
+    background-color: rgb(24, 85, 70);
+    color:white;
+}
+img{
+    width: 150px;
+    margin: 2px;
+}
+#table-responsive {
+font-size: 55px;
+font-family: 'Times New Roman', Times, serif;
+text-align: center;
+border: 2px;
+align-content: center;
+
+}
+ 
+
+#qty {
+    width: 50px;
+}
+
+table {
+
+    border-collapse: collapse;
+    table-layout: auto;
+    border-spacing: 3px;
+    padding: 50px;
+}
+th {
+    min-height: 50px;
+    padding: 50px;
+}
+#checkout {
+
+    float: right;
+
+}
+#CompleteOrder  {
+    float: right;
+}
+i {
+    float: right;
+    margin-left: 480PX;
+}
+td {
+
+    padding-bottom: 30px;
+}
